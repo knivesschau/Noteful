@@ -5,6 +5,7 @@ import NoteListNav from './NoteListNav/NoteListNav';
 import NotePageNav from './NotePageNav/NotePageNav';
 import NoteListMain from './NoteListMain/NoteListMain';
 import NotePageMain from './NotePageMain/NotePageMain';
+import AddNote from './AddNote/AddNote';
 import notefulContext from './notefulContext';
 import config from './config';
 import './App.css';
@@ -44,6 +45,15 @@ class App extends Component {
     });
   }
 
+  handleAddNote = note => {
+    this.setState({
+      notes: [
+        ...this.state.notes,
+        note
+      ]
+    });
+  }
+
   renderNavRoutes() {
     return (
       <>
@@ -75,6 +85,7 @@ class App extends Component {
         ))}
 
         <Route path="/note/:noteId" component={NotePageMain}/>
+        <Route path="/add-note" component={AddNote}/>
       </>
     );
   }
@@ -83,7 +94,8 @@ class App extends Component {
     const value = {
       notes: this.state.notes,
       folders: this.state.folders,
-      deleteNote: this.handleDeleteNote
+      deleteNote: this.handleDeleteNote,
+      addNote: this.handleAddNote
     };
     
     return (
