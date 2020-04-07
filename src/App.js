@@ -47,16 +47,16 @@ class App extends Component {
     });
   }
 
-  handleAddNote = note => {
+  handleAddNote = (addedNote) => {
     this.setState({
       notes: [
         ...this.state.notes,
-        note
+        addedNote
       ]
     });
   }
 
-  handleAddFolder = folder => {
+  handleAddFolder = (folder) => {
     this.setState({
       folders: [
         ...this.state.folders,
@@ -78,8 +78,8 @@ class App extends Component {
           ))}
 
           <Route path="/note/:noteId" component={NotePageNav}/>
-          <Route path="/add-folder" component={NotePageNav}/>
-          <Route path="/add-note" component={NotePageNav}/>
+          <Route path="/add-folder" component={NoteListNav}/>
+          <Route path="/add-note" component={NoteListNav}/>
         </>
     );
   }

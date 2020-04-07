@@ -19,7 +19,7 @@ export default class AddNote extends Component {
                 name: '',
                 folderId: ''
             }
-        }
+        };
     }
 
     updateName(name) {
@@ -95,7 +95,6 @@ export default class AddNote extends Component {
             name: this.state.name,
             content: this.state.content,
             folderId: this.state.folderId,
-            modified: new Date(),
         };
 
         fetch(`${config.API_ENDPOINT}/notes`, {

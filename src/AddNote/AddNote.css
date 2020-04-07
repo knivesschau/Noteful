@@ -5,3 +5,7 @@
   .AddNote h2 {
     margin-left: 16px;
   }
+
+  button:hover {
+    cursor: pointer;
+  }
