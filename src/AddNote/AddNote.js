@@ -1,25 +1,100 @@
 import React, {Component} from 'react';
 import notefulContext from '../notefulContext';
-import NotefulForm from '../NotefulForm/NotefulForm'
-import {validateFolder, validateNoteName, validateNoteContent} from '../NoteValidation';
+import NotefulForm from '../NotefulForm/NotefulForm';
+import ValidationError from '../ValidationError';
 import config from '../config';
 import './AddNote.css';
 
 export default class AddNote extends Component {
-    static defaultProps = {
-        history: {
-            push: () => { }
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: "",
+            content: "",
+            folderId: null,
+            validName: false,
+            folderIdValid: false,
+            validForm: false,
+            validationMessages: {
+                name: '',
+                folderId: ''
+            }
         }
-    };
+    }
 
-    static contextType = notefulContext;
+    updateName(name) {
+        this.setState({name}, () => {this.validateNoteName(name)});
+    }
 
-    handleSubmit = e => {
-        e.preventDefault();
+    updateContent(content) {
+        this.setState({content})
+    }
+
+    updateFolderId(folderId) {
+        this.setState({folderId}, () => {this.validateFolderId(folderId)});
+    }
+
+    validateNoteName(noteTitle) {
+        const errorInfo = {...this.state.validationMessages};
+        let hasError = false;
+
+        noteTitle = noteTitle.trim();
+
+        if (noteTitle.length === 0) {
+            errorInfo.name = "Please enter a title for your note.";
+            hasError = true;
+        }
+        else {
+            if (noteTitle.length < 3) {
+                errorInfo.name = "Note title must be at least 3 characters in length.";
+                hasError = true;
+            }
+            else {
+                errorInfo.name = '';
+                hasError = false;
+            }
+        }
+
+        this.setState({
+            validationMessages: errorInfo,
+            validName: !hasError
+        }, 
+        this.validForm);
+    }
+
+    validateFolderId(folderName) {
+        const errorInfo = {...this.state.validationMessages};
+        let hasError = false;
+
+        folderName = folderName.trim();
+
+        if (folderName === "..." || folderName === null) {
+            errorInfo.folderId = "Please choose an existing folder.";
+            hasError = true;
+        }
+        else {
+            errorInfo.folderId = '';
+            hasError = false;
+        }
+
+        this.setState({
+            validationMessages: errorInfo,
+            folderIdValid: !hasError
+        },
+        this.validForm);
+    }
+
+    formValidation () {
+        this.setState({
+            validForm: this.state.validName && this.state.folderIdValid
+        });
+    }
+
+   addNewNote = (callback) => {
         const newNote = {
-            name: e.target['note-name'].value,
-            content: e.target['note-content'].value,
-            folderId: e.target['note-folder-id'].value,
+            name: this.state.name,
+            content: this.state.content,
+            folderId: this.state.folderId,
             modified: new Date(),
         };
 
@@ -32,68 +107,86 @@ export default class AddNote extends Component {
         })
         .then (res => {
             if (!res.ok) {
-                return res.json().then(e => Promise.reject(e))
+                return res.json().then(err => {
+                    throw err
+                });
             }
             return res.json();
         })
-        .then (note => {
-            this.context.addNote(note);
-            this.props.history.push(`/folder/${note.folderId}`);
+        .then (addedNote => {
+            callback(addedNote);
         })
-        .catch (err => {
-            console.error({err})
-        });
-    }
+        .catch (err => alert(err));
+    };
 
     render () {
-        const { folders = [] } = this.context;
         
         return (
-            <section className="AddNote">
-                <h2>
-                    Create a Note
-                </h2>
+           <notefulContext.Consumer>
+               {(context) => (
+                   <section className="AddNote">
+                       <h2>
+                           Create a New Note:
+                       </h2>
 
-                <NotefulForm onSubmit={this.handleSubmit}>
-                    <div className="field">
-                        <label htmlFor='note-name-input'>
-                            Name
-                        </label>
+                       <NotefulForm onSubmit={e => {
+                           e.preventDefault();
+                           this.addNewNote(context.addNote)
+                           this.props.history.push(`/folder/${this.state.folderId}`)}}>
 
-                        <input type='text' id='note-name-input' name='note-name'/>
-                    </div>
+                            <div className="field">
+                                
+                                <label htmlFor="note-name-input">
+                                    Name:
+                                </label>
 
-                    <div className="field">
-                        <label htmlFor='note-content-input'>
-                            Content
-                        </label>
-                        <textarea id="note-content-input" name="note-content"/>
-                    </div>
+                                <input type="text" id="note-name-input" onChange={e => this.updateName(e.target.value)}/>
+                                <ValidationError hasError={!this.state.validName} message={this.state.validationMessages.name}/>
 
-                    <div className="field">
-                        <label htmlFor="note-folder-select">
-                            Folder 
-                        </label>
+                            </div>
 
-                        <select id="note-folder-select" name="note-folder-id">
-                            <option value={null}>...</option>
+                            <div className="field">
 
-                            {folders.map(folder => 
-                                <option key={folder.id} value={folder.id}>
-                                    {folder.name}
-                                </option>
-                            )};
-                        </select>
-                    </div>
+                                <label htmlFor="note-content-input">
+                                    Content:
+                                </label>
 
-                    <div className="buttons">
-                        <button type="submit">
-                            Add note
-                        </button>
-                    </div>
+                                <textarea id="note-content-input" onChange={e => this.updateContent(e.target.value)}/>
 
-                </NotefulForm>
-            </section>
+                            </div>
+
+                            <div className="field">
+
+                                <label htmlFor="note-folder-select">
+                                    Folder:
+                                </label>
+
+                                <select id="note-folder-select" onChange={e => this.updateFolderId(e.target.value)}>
+
+                                    <option value={null}>...</option>
+
+                                    {context.folders.map(folder => 
+                                        <option key={folder.id} value={folder.id}>
+                                            {folder.name}
+                                        </option>
+                                    )}
+                                </select>
+                                
+                                <ValidationError hasError={!this.state.folderIdValid} message={this.state.validationMessages.folderId}/>
+                            </div>
+                            
+                            <div className="buttons">
+
+                                <button type="submit" disabled={!this.state.validForm}>
+                                    Add Note
+                                </button>
+
+                            </div>
+
+                        </NotefulForm>   
+                   </section>
+               )}
+           </notefulContext.Consumer>
         );
     }
 }

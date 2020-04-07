@@ -6,20 +6,58 @@ import ValidationError from '../ValidationError';
 import './AddFolder.css';
 
 export default class AddFolder extends Component {
-    static defaultProps = {
-        history: {
-            push: () => { }
+   constructor(props) {
+       super(props);
+       this.state = {
+           name: "",
+           validName: false,
+           validForm: false,
+           validationMessages: {
+               name: ''
+           }
+       };
+   }
+   
+   updateFolderName = (name) => {
+       this.setState({name}, () => {this.validateName(name)})
+   }
+
+   validateName = (folderName) => {
+    const errorInfo = {...this.state.validationMessages};
+    let hasError = false;
+
+    folderName = folderName.trim();
+        if (folderName.length === 0) {
+        errorInfo.name = 'Please enter a name for the folder.';
+        hasError = true;
+        } 
+        else {
+            if (folderName.length < 3) {
+                errorInfo.name = 'Please enter a name that is at least 3 characters long.';
+                hasError = true;
+            } 
+            else {
+                errorInfo.name = '';
+                hasError = false;
+            }
         }
-    };
 
-    static contextType = notefulContext;
+        this.setState({
+            validationMessages: errorInfo,
+            validName: !hasError
+            },
+            this.validateForm);
+    }
 
+    validateForm = () => {
+        this.setState({
+            validForm: this.state.validName
+        });
+    }
 
-    handleSubmit = e => {
-        e.preventDefault()
-        
+    addNewFolder = (callback) => {
         const folder = {
-            name: e.target['folder-name'].value
+            name: this.state.name
         };
 
         fetch(`${config.API_ENDPOINT}/folders`, {
@@ -31,46 +69,56 @@ export default class AddFolder extends Component {
         })
         .then (res => {
             if (!res.ok) {
-                return res.json().then(e => Promise.reject(e))
+                return res.json().then(err => {
+                    throw err;
+                })
             }
             return res.json();
         })
-        .then (folder => {
-            this.context.addFolder(folder)
-            this.props.history.push(`/folder/${folder.id}`)
+        .then (newFolder => {
+            callback(newFolder);
         })
-        .catch (err => {
-            console.error({err});
-        });
-    }
+        .catch (err => alert(err));
+    };
     
 
     render () {
         return (
-            <section className='AddFolder'>
-                <h2>
-                    Create a Folder
-                </h2>
+            <notefulContext.Consumer>
+                {(context) => (
+                    <section className='AddFolder'>
+                        <h2>
+                            Create a New Folder:
+                        </h2>
 
-                <NotefulForm onSubmit={this.handleSubmit}>
-                    
-                    <div className="field">
-                        <label htmlFor="folder-name-input">
-                            Name of Folder: 
-                        </label>
+                        <NotefulForm onSubmit={(e) => {
+                            e.preventDefault();
+                            this.addNewFolder(context.addFolder);
+                            this.props.history.push('/')}}>
                         
-                        <input type='text' id='folder-name-input' name='folder-name'/>
+                            <div className="field">
 
-                    </div>
+                                <label htmlFor="folder-name-input">
+                                    Name
+                                </label>
 
-                    <div className="buttons">
-                        <button type="submit">
-                            Add Folder
-                        </button>
-                    </div>
+                                <input type="text" id="folder-name-input" onChange={e => this.updateFolderName(e.target.value)}/>
+                                <ValidationError hasError={!this.state.validName} message={this.state.validationMessages.name}/>
 
-                </NotefulForm>
-            </section>
+                            </div>
+
+                            <div className="buttons">
+
+                                <button type="submit" disabled={!this.state.validForm}>
+                                    Add Folder 
+                                </button>
+
+                            </div>
+
+                        </NotefulForm>
+                    </section>
+                )}
+            </notefulContext.Consumer>
         );
     }
 }

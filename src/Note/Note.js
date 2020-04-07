@@ -80,8 +80,7 @@ export default class Note extends Component {
   }
 
   Note.propTypes = {
-    id: PropTypes.string, 
-    name: PropTypes.string,
-    modified: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
-    deleteNote: PropTypes.func
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    modified: PropTypes.string
   }

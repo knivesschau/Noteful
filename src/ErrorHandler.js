@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import './ErrorHandler.css';
 
 export default class ErrorHandler extends Component {
     constructor(props) {
