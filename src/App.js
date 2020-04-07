@@ -78,8 +78,8 @@ class App extends Component {
           ))}
 
           <Route path="/note/:noteId" component={NotePageNav}/>
-          <Route path="/add-folder" component={NoteListNav}/>
-          <Route path="/add-note" component={NoteListNav}/>
+          <Route path="/add-folder" component={NotePageNav}/>
+          <Route path="/add-note" component={NotePageNav}/>
         </>
     );
   }
