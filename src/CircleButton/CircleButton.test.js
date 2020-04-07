@@ -18,6 +18,6 @@ describe(`CircleButton component`, () => {
 
     it ('renders the circle button from props', () => {
         const wrapper = shallow(<CircleButton {...props} />)
-        expect(toJson(wrapper).toMatchSnapshot())
+        expect(toJson(wrapper)).toMatchSnapshot();
     });
 })

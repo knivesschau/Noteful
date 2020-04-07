@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import notefulContext from '../notefulContext';
 import NotefulForm from '../NotefulForm/NotefulForm'
-import {validateFolder, validateNoteName, validateNoteContent} from './NoteValidation';
+import {validateFolder, validateNoteName, validateNoteContent} from '../NoteValidation';
 import config from '../config';
 import './AddNote.css';
 

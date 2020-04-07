@@ -43,7 +43,7 @@ describe('NoteListMain component', () => {
     });
 
     it ('renders a Note in ul for each notes in the array', () => {
-        const ul = shallow(<NotteListMain {...props}/>)
+        const ul = shallow(<NoteListMain {...props}/>)
         expect(toJson(ul)).toMatchSnapshot()
     });
 })

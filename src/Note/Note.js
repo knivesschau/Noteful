@@ -4,6 +4,7 @@ import {format} from 'date-fns';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import notefulContext from '../notefulContext';
 import config from '../config';
+import PropTypes from 'prop-types';
 import './Note.css';
 
 export default class Note extends Component {
@@ -68,7 +69,7 @@ export default class Note extends Component {
               {' '}
             
               <span className='Date'>
-                {format(new Date(modified), 'dd MMM yyyy')}
+                {format(new Date(modified), "dd MMM yyyy")}
               </span>
             
             </div>
@@ -76,4 +77,11 @@ export default class Note extends Component {
         </div>
       )
     }
+  }
+
+  Note.propTypes = {
+    id: PropTypes.string, 
+    name: PropTypes.string,
+    modified: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
+    deleteNote: PropTypes.func
   }

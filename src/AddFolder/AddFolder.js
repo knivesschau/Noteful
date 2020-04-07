@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import NotefulForm from '../NotefulForm/NotefulForm';
 import notefulContext from '../notefulContext';
 import config from '../config';
+import ValidationError from '../ValidationError';
 import './AddFolder.css';
 
 export default class AddFolder extends Component {
@@ -13,11 +14,13 @@ export default class AddFolder extends Component {
 
     static contextType = notefulContext;
 
+
     handleSubmit = e => {
         e.preventDefault()
+        
         const folder = {
             name: e.target['folder-name'].value
-        }
+        };
 
         fetch(`${config.API_ENDPOINT}/folders`, {
             method: 'POST',
@@ -36,10 +39,11 @@ export default class AddFolder extends Component {
             this.context.addFolder(folder)
             this.props.history.push(`/folder/${folder.id}`)
         })
-        .catch (error => {
-            console.error({error});
+        .catch (err => {
+            console.error({err});
         });
     }
+    
 
     render () {
         return (
@@ -56,6 +60,7 @@ export default class AddFolder extends Component {
                         </label>
                         
                         <input type='text' id='folder-name-input' name='folder-name'/>
+
                     </div>
 
                     <div className="buttons">
