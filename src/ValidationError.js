@@ -1,11 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 export default function ValidationError(props) {
     if (props.hasError) {
         return (
-            <div className="error"
-                 onClick={e => props.clearError()}>
+            <div className="error">
                 
                 {props.message}
 
@@ -16,9 +14,4 @@ export default function ValidationError(props) {
     return (
         <></>
     );
-}
-
-ValidationError.propTypes = {
-    message: PropTypes.string,
-    clearError: PropTypes.func
 }

@@ -1,15 +1,19 @@
 import React, {Component} from 'react';
 
 export default class ErrorHandler extends Component {
-    state = {error: false};
+    constructor(props) {
+        super(props);
+        this.state = {
+            hasError: false
+        };
+    }
 
     static getDerivedStateFromError(error) {
-        console.error(error);
-        return {error};
+        return {hasError: true}
     }
 
     render () {
-        if (this.state.error) {
+        if (this.state.hasError) {
             return (
                 <main className="error-page">
                     <h1>
