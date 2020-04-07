@@ -57,7 +57,6 @@ export default class AddNote extends Component {
     }
 
     addNewNote = e => {
-        e.preventDefault();
         
         const newNote = {
             name: e.target['note-name'].value,

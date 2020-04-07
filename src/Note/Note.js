@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import {format} from 'date-fns';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import notefulContext from '../notefulContext';
 import config from '../config';
@@ -69,7 +68,7 @@ export default class Note extends Component {
               {' '}
             
               <span className='Date'>
-                {format(new Date(modified), "dd MMM yyyy")}
+                {new Date(modified).toDateString()}
               </span>
             
             </div>
