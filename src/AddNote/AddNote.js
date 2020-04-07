@@ -6,186 +6,150 @@ import config from '../config';
 import './AddNote.css';
 
 export default class AddNote extends Component {
+    static defaultProps = {
+        history: {
+            push: () => {}
+        },
+    }
+
+    static contextType = notefulContext; 
+
     constructor(props) {
         super(props);
         this.state = {
-            name: "",
-            content: "",
-            folderId: null,
-            validName: false,
-            folderIdValid: false,
-            validForm: false,
-            validationMessages: {
-                name: '',
-                folderId: ''
+            name: {
+                value: '',
+                touched: false
+            },
+            content: {
+                value: '',
+                touched: false
+            },
+            folder: {
+                value: ''
             }
         };
     }
 
     updateName(name) {
-        this.setState({name}, () => {this.validateNoteName(name)});
+        this.setState({name: {value: name, touched: true}});
     }
 
-    updateContent(content) {
-        this.setState({content})
+    updatedContent(content) {
+        this.setState({content: {value: content, touched: true}});
     }
 
-    updateFolderId(folderId) {
-        this.setState({folderId}, () => {this.validateFolderId(folderId)});
-    }
-
-    validateNoteName(noteTitle) {
-        const errorInfo = {...this.state.validationMessages};
-        let hasError = false;
-
-        noteTitle = noteTitle.trim();
-
+    validateName(title) {
+        const noteTitle = this.state.name.value.trim();
         if (noteTitle.length === 0) {
-            errorInfo.name = "Please enter a title for your note.";
-            hasError = true;
+            return "Please enter a title for your note."
         }
-        else {
-            if (noteTitle.length < 3) {
-                errorInfo.name = "Note title must be at least 3 characters in length.";
-                hasError = true;
-            }
-            else {
-                errorInfo.name = '';
-                hasError = false;
-            }
+        if (noteTitle.length < 3) {
+            return "Please enter a note title that is at least 3 characters in length.";
         }
-
-        this.setState({
-            validationMessages: errorInfo,
-            validName: !hasError
-        }, 
-        this.validForm);
     }
 
-    validateFolderId(folderName) {
-        const errorInfo = {...this.state.validationMessages};
-        let hasError = false;
-
-        folderName = folderName.trim();
-
-        if (folderName === "..." || folderName === null) {
-            errorInfo.folderId = "Please choose an existing folder.";
-            hasError = true;
+    validateContent(input) {
+        const content = this.state.content.value.trim();
+        if (content.length === 0) {
+            return "Please enter some note text.";
         }
-        else {
-            errorInfo.folderId = '';
-            hasError = false;
-        }
-
-        this.setState({
-            validationMessages: errorInfo,
-            folderIdValid: !hasError
-        },
-        this.validForm);
     }
 
-    formValidation () {
-        this.setState({
-            validForm: this.state.validName && this.state.folderIdValid
-        });
-    }
-
-   addNewNote = (callback) => {
+    addNewNote = e => {
         const newNote = {
-            name: this.state.name,
-            content: this.state.content,
-            folderId: this.state.folderId,
+            name: e.target['note-name'].value,
+            content: e.target['note-content'].value,
+            folderId: e.target['note-folder-id'].value,
+            modified: new Date()
         };
 
         fetch(`${config.API_ENDPOINT}/notes`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(newNote),
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(newNote),
         })
-        .then (res => {
+        .then(res => {
             if (!res.ok) {
-                return res.json().then(err => {
-                    throw err
-                });
+                return res.json().then(e => Promise.reject(e))
             }
             return res.json();
         })
-        .then (addedNote => {
-            callback(addedNote);
+        .then(note => {
+            console.log(note);
+            this.context.addNote(note);
+            this.props.history.push(`/folder/${note.folderId}`);
         })
-        .catch (err => alert(err));
-    };
+        .catch(error => {
+            console.error(error);
+        });
+    }
 
-    render () {
-        
+    render() {
+        const {folders = []} = this.context;
+
         return (
-           <notefulContext.Consumer>
-               {(context) => (
-                   <section className="AddNote">
-                       <h2>
-                           Create a New Note:
-                       </h2>
+            <section className="AddNote">
+                <h2>
+                    Create a new note: 
+                </h2>
 
-                       <NotefulForm onSubmit={e => {
-                           e.preventDefault();
-                           this.addNewNote(context.addNote)
-                           this.props.history.push(`/folder/${this.state.folderId}`)}}>
+                <NotefulForm onSubmit={this.addNewNote}>
+                    
+                    <div className="field">
+                        
+                        <label htmlFor="note-name-input">
+                            Note Title:
+                        </label>
 
-                            <div className="field">
-                                
-                                <label htmlFor="note-name-input">
-                                    Name:
-                                </label>
+                        <input type="text" id="note-name-input" name="note-name" onChange={e => this.updateName(e.target.value)}/>
+                        <ValidationError message={this.validateName()}/>
 
-                                <input type="text" id="note-name-input" onChange={e => this.updateName(e.target.value)}/>
-                                <ValidationError hasError={!this.state.validName} message={this.state.validationMessages.name}/>
+                    </div>
 
-                            </div>
+                    <div className="field">
 
-                            <div className="field">
+                        <label htmlFor="note-content-input">
+                            Content:
+                        </label>
 
-                                <label htmlFor="note-content-input">
-                                    Content:
-                                </label>
+                        <textarea id="note-content-input" name="note-content" onChange={e => this.updatedContent(e.target.value)}/>
+                        <ValidationError message={this.validateContent()}/>
 
-                                <textarea id="note-content-input" onChange={e => this.updateContent(e.target.value)}/>
+                    </div>
 
-                            </div>
+                    <div className="field">
+                        <label htmlFor="note-folder-select">
+                            Folder:
+                        </label>
 
-                            <div className="field">
-
-                                <label htmlFor="note-folder-select">
-                                    Folder:
-                                </label>
-
-                                <select id="note-folder-select" onChange={e => this.updateFolderId(e.target.value)}>
-
-                                    <option value={null}>...</option>
-
-                                    {context.folders.map(folder => 
-                                        <option key={folder.id} value={folder.id}>
-                                            {folder.name}
-                                        </option>
-                                    )}
-                                </select>
-                                
-                                <ValidationError hasError={!this.state.folderIdValid} message={this.state.validationMessages.folderId}/>
-                            </div>
+                        <select id="note-folder-seiect" name="note-folder-id">
+                            <option value={null}>...</option>
                             
-                            <div className="buttons">
+                            {folders.map(folder => 
+                                <option key={folder.id} value={folder.id}>
+                                    {folder.name}
+                                </option>
+                                )}
+                            
+                        </select>
+                    </div>
 
-                                <button type="submit" disabled={!this.state.validForm}>
-                                    Add Note
-                                </button>
+                    <div className="buttons">
+                        <button
+                            type="submit"
+                            disabled= {
+                                this.validateName() ||
+                                this.validateContent()
+                            }>
 
-                            </div>
-
-                        </NotefulForm>   
-                   </section>
-               )}
-           </notefulContext.Consumer>
+                            Add Note
+                        </button>
+                    </div>
+                </NotefulForm>
+            </section>
         );
     }
 }
