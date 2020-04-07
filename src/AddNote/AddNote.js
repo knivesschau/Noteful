@@ -26,9 +26,11 @@ export default class AddNote extends Component {
                 touched: false
             },
             folder: {
-                value: ''
-            }
+                value: '',
+                touched: false
+            },
         };
+
     }
 
     updateName(name) {
@@ -39,7 +41,18 @@ export default class AddNote extends Component {
         this.setState({content: {value: content, touched: true}});
     }
 
-    validateName(title) {
+    updateFolderSelect(folder) {
+        this.setState({folder: {value: folder, touched: true}});
+    }
+
+    validateFolderName() {
+        const folderName = this.state.folder.value.trim();
+        if (folderName.length === 0) {
+            return "Please select an existing folder."
+        }
+    }
+
+    validateName() {
         const noteTitle = this.state.name.value.trim();
         if (noteTitle.length === 0) {
             return "Please enter a title for your note."
@@ -49,7 +62,7 @@ export default class AddNote extends Component {
         }
     }
 
-    validateContent(input) {
+    validateContent() {
         const content = this.state.content.value.trim();
         if (content.length === 0) {
             return "Please enter some note text.";
@@ -57,12 +70,13 @@ export default class AddNote extends Component {
     }
 
     addNewNote = e => {
-        
+        e.preventDefault();
+
         const newNote = {
             name: e.target['note-name'].value,
             content: e.target['note-content'].value,
             folderId: e.target['note-folder-id'].value,
-            modified: new Date()
+            modified: new Date(),
         };
 
         fetch(`${config.API_ENDPOINT}/notes`, {
@@ -84,7 +98,7 @@ export default class AddNote extends Component {
             this.props.history.push(`/folder/${note.folderId}`);
         })
         .catch(error => {
-            console.error(error);
+            console.error({error});
         });
     }
 
@@ -126,8 +140,8 @@ export default class AddNote extends Component {
                             Folder:
                         </label>
 
-                        <select id="note-folder-seiect" name="note-folder-id">
-                            <option value={null}>...</option>
+                        <select id="note-folder-seiect" name="note-folder-id" onChange={e => this.updateFolderSelect(e.target.value)}>
+                            <option value={null}></option>
                             
                             {folders.map(folder => 
                                 <option key={folder.id} value={folder.id}>
@@ -135,6 +149,7 @@ export default class AddNote extends Component {
                                 </option>
                                 )}
                             
+                            <ValidationError message={this.validateFolderName()}/>
                         </select>
                     </div>
 
