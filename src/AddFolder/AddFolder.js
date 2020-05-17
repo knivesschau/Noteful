@@ -6,11 +6,19 @@ import ValidationError from '../ValidationError';
 import './AddFolder.css';
 
 export default class AddFolder extends Component {
-   static defaultProps = {
-       history: {
-           push: () => { }
-       },
+   constructor(props) {
+       super(props);
+       this.state = {
+           name: "",
+           validName: false,
+           validForm: false,
+           validationMessages: {
+               name: ''
+           }
+       };
    }
+
+   static contextType = notefulContext;
    
    updateFolderName = (name) => {
        this.setState({name}, () => {this.validateName(name)})
@@ -49,9 +57,11 @@ export default class AddFolder extends Component {
         });
     }
 
-    addNewFolder = (callback) => {
+    handleSubmit = e => {
+        e.preventDefault();
+        
         const folder = {
-            name: this.state.name
+            folder_name: e.target['folder-name'].value
         };
 
         fetch(`${config.API_ENDPOINT}/folders`, {
@@ -63,14 +73,13 @@ export default class AddFolder extends Component {
         })
         .then (res => {
             if (!res.ok) {
-                return res.json().then(err => {
-                    throw err;
-                })
+                return res.json().then(e => Promise.reject(e))
             }
             return res.json();
         })
-        .then (newFolder => {
-            callback(newFolder);
+        .then (folder => {
+            this.context.addFolder(folder);
+            this.props.history.push(`/folders/${folder.folderid}`)
         })
         .catch (err => alert(err));
     };
@@ -85,10 +94,7 @@ export default class AddFolder extends Component {
                             Create a New Folder:
                         </h2>
 
-                        <NotefulForm onSubmit={(e) => {
-                            e.preventDefault();
-                            this.addNewFolder(context.addFolder);
-                            this.props.history.push(`/folders/${folderId}`)}}>
+                        <NotefulForm onSubmit={this.handleSubmit}>
                         
                             <div className="field">
 
@@ -96,7 +102,7 @@ export default class AddFolder extends Component {
                                     Name
                                 </label>
 
-                                <input type="text" id="folder-name-input" onChange={e => this.updateFolderName(e.target.value)}/>
+                                <input type="text" id="folder-name" onChange={e => this.updateFolderName(e.target.value)}/>
                                 <ValidationError hasError={!this.state.validName} message={this.state.validationMessages.name}/>
 
                             </div>
