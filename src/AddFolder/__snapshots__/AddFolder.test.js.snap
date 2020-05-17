@@ -1,38 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AddFolder component renders the complete AddFolder form 1`] = `
-<section
-  className="AddFolder"
->
-  <h2>
-    Create a Folder
-  </h2>
-  <NotefulForm
-    onSubmit={[Function]}
-  >
-    <div
-      className="field"
-    >
-      <label
-        htmlFor="folder-name-input"
-      >
-        Name of Folder:
-      </label>
-      <input
-        id="folder-name-input"
-        name="folder-name"
-        type="text"
-      />
-    </div>
-    <div
-      className="buttons"
-    >
-      <button
-        type="submit"
-      >
-        Add Folder
-      </button>
-    </div>
-  </NotefulForm>
-</section>
+<ContextConsumer>
+  <Component />
+</ContextConsumer>
 `;

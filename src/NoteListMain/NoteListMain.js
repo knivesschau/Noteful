@@ -25,10 +25,10 @@ export default class NoteListMain extends Component {
             <section className="NoteListMain">
                 <ul>
                     {notesForFolder.map(note => 
-                        <li key={note.id}>
+                        <li key={note.note_id}>
                             <Note
-                                id={note.id}
-                                name={note.name}
+                                id={note.note_id}
+                                name={note.note_name}
                                 modified={note.modified}/>
                         </li>
                     )}

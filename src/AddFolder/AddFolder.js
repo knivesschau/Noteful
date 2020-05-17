@@ -6,16 +6,10 @@ import ValidationError from '../ValidationError';
 import './AddFolder.css';
 
 export default class AddFolder extends Component {
-   constructor(props) {
-       super(props);
-       this.state = {
-           name: "",
-           validName: false,
-           validForm: false,
-           validationMessages: {
-               name: ''
-           }
-       };
+   static defaultProps = {
+       history: {
+           push: () => { }
+       },
    }
    
    updateFolderName = (name) => {
@@ -94,7 +88,7 @@ export default class AddFolder extends Component {
                         <NotefulForm onSubmit={(e) => {
                             e.preventDefault();
                             this.addNewFolder(context.addFolder);
-                            this.props.history.push('/')}}>
+                            this.props.history.push(`/folders/${folderId}`)}}>
                         
                             <div className="field">
 
