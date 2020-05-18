@@ -5,7 +5,7 @@ exports[`AddNote component renders the complete AddNote form 1`] = `
   className="AddNote"
 >
   <h2>
-    Create a Note
+    Create a new note:
   </h2>
   <NotefulForm
     onSubmit={[Function]}
@@ -16,12 +16,16 @@ exports[`AddNote component renders the complete AddNote form 1`] = `
       <label
         htmlFor="note-name-input"
       >
-        Name
+        Note Title:
       </label>
       <input
         id="note-name-input"
         name="note-name"
+        onChange={[Function]}
         type="text"
+      />
+      <ValidationError
+        message="Please enter a title for your note."
       />
     </div>
     <div
@@ -30,11 +34,15 @@ exports[`AddNote component renders the complete AddNote form 1`] = `
       <label
         htmlFor="note-content-input"
       >
-        Content
+        Content:
       </label>
       <textarea
         id="note-content-input"
         name="note-content"
+        onChange={[Function]}
+      />
+      <ValidationError
+        message="Please enter some note text."
       />
     </div>
     <div
@@ -43,27 +51,25 @@ exports[`AddNote component renders the complete AddNote form 1`] = `
       <label
         htmlFor="note-folder-select"
       >
-        Folder
+        Folder:
       </label>
       <select
-        id="note-folder-select"
+        id="note-folder-seiect"
         name="note-folder-id"
       >
-        <option
-          value={null}
-        >
-          ...
-        </option>
-        ;
+        <ValidationError
+          message="Please select an existing folder."
+        />
       </select>
     </div>
     <div
       className="buttons"
     >
       <button
+        disabled="Please enter a title for your note."
         type="submit"
       >
-        Add note
+        Add Note
       </button>
     </div>
   </NotefulForm>
