@@ -17,13 +17,13 @@ export default class NoteListNav extends Component {
                 
                 <ul className="NoteListNav__list">
                     {folders.map(folder =>
-                        <li key={folder.folderid}>
+                        <li key={folder.folder_id}>
                             <NavLink
                                 className="NoteListNav__folder-link"
-                                to={`/folders/${folder.folderid}`}>
+                                to={`/folders/${folder.folder_id}`}>
                             
                                 <span className="NoteListNav__num-notes">
-                                    {countNotesForFolder(notes, folder.folderid)}
+                                    {countNotesForFolder(notes, folder.folder_id)}
                                 </span>
                                 {folder.folder_name}
                             </NavLink>

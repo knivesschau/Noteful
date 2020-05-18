@@ -69,7 +69,7 @@ export default class AddNote extends Component {
         }
     }
 
-    addNewNote = e => {
+    handleSubmit = e => {
         e.preventDefault();
 
         const newNote = {
@@ -111,7 +111,7 @@ export default class AddNote extends Component {
                     Create a new note: 
                 </h2>
 
-                <NotefulForm onSubmit={this.addNewNote}>
+                <NotefulForm onSubmit={this.handleSubmit}>
                     
                     <div className="field">
                         
@@ -140,11 +140,11 @@ export default class AddNote extends Component {
                             Folder:
                         </label>
 
-                        <select id="note-folder-seiect" name="note-folder-id" onChange={e => this.updateFolderSelect(e.target.value)}>
+                        <select id="note-folder-seiect" name="note-folder-id">
                             
                             {folders.map(folder => 
-                                <option key={folder.id} value={folder.id}>
-                                    {folder.name}
+                                <option key={folder.folder_id} value={folder.folder_id} onChange={e => this.updateFolderSelect(e.target.value)}>
+                                {folder.folder_name}
                                 </option>
                                 )}
                             

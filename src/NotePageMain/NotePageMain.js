@@ -13,19 +13,19 @@ export default class NotePageMain extends Component {
 
     static contextType = notefulContext;
 
-    handleDeleteNote = noteid => {
+    handleDeleteNote = id => {
         this.props.history.push(`/`)
     };
     
     render () {
         const {notes=[]} = this.context;
-        const {noteid} = this.props.match.params;
-        const note = findNote(notes,noteid) || {content: ''};
+        const {id} = this.props.match.params;
+        const note = findNote(notes, id) || {content: ''};
 
         return (
             <section className="NotePageMain">
                 <Note
-                    id={note.noteid}
+                    id={note.id}
                     name={note.name}
                     modified={note.modified}
                     onDeleteNote={this.handleDeleteNote}/>

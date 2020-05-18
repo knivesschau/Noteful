@@ -15,9 +15,9 @@ export default class Note extends Component {
 
     handleClickDelete = e => {
       e.preventDefault();
-      const noteid = this.props.noteid
+      const id = this.props.id;
 
-      fetch(` ${config.API_ENDPOINT}/notes/${noteid}`, {
+      fetch(` ${config.API_ENDPOINT}/notes/${id}`, {
         method: 'DELETE',
         headers: {
           'content-type': 'application/json'
@@ -30,8 +30,8 @@ export default class Note extends Component {
         return res.json();
       })
       .then(() => {
-        this.context.deleteNote(noteid);
-        this.props.onDeleteNote(noteid);
+        this.context.deleteNote(id);
+        this.props.onDeleteNote(id);
       })
       .catch(error => {
         console.error({error});
@@ -39,13 +39,13 @@ export default class Note extends Component {
     }
 
     render () {  
-      const {name, noteid, modified} = this.props; 
+      const {name, id, modified} = this.props; 
 
       return (
         <div className='Note'>
 
           <h2 className='Note__title'>
-            <Link to={`/notes/${noteid}`}>
+            <Link to={`/notes/${id}`}>
               {name}
             </Link>
           </h2>
@@ -78,8 +78,8 @@ export default class Note extends Component {
     }
   }
 
-  // Note.propTypes = {
-  //   id: PropTypes.number,
-  //   name: PropTypes.string.isRequired,
-  //   modified: PropTypes.string
-  // }
+  Note.propTypes = {
+    id: PropTypes.number,
+    name: PropTypes.string.isRequired,
+    modified: PropTypes.string
+  }
