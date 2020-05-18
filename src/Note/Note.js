@@ -17,7 +17,7 @@ export default class Note extends Component {
       e.preventDefault();
       const id = this.props.id;
 
-      fetch(` ${config.API_ENDPOINT}/notes/${id}`, {
+      fetch(`${config.API_ENDPOINT}/notes/${id}`, {
         method: 'DELETE',
         headers: {
           'content-type': 'application/json'

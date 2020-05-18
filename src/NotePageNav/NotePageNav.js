@@ -37,11 +37,11 @@ export default class NotePageNav extends Component {
                     Back
                 </CircleButton>
 
-                {folder && (
+                {/* {folder && (
                     <h3 className='NotePageNav__folder-name'>
                         {folder.folder_name}
                     </h3>
-                )}
+                )} */}
             </div>
         );
     }
