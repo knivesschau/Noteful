@@ -27,7 +27,7 @@ export default class Note extends Component {
         if (!res.ok) {
           return res.json().then(e => Promise.reject(e));
         }
-        return res.json();
+        return null;
       })
       .then(() => {
         this.context.deleteNote(id);

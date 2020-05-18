@@ -27,6 +27,7 @@ export default class NotePageMain extends Component {
                 <Note
                     id={note.id}
                     name={note.name}
+                    content= {note.content}
                     modified={note.modified}
                     onDeleteNote={this.handleDeleteNote}/>
                 
