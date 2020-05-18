@@ -6,7 +6,13 @@ import ValidationError from '../ValidationError';
 import './AddFolder.css';
 
 export default class AddFolder extends Component {
-   constructor(props) {
+   static defaultProps = {
+       history: {
+           push: () => {}
+       },
+   };
+   
+    constructor(props) {
        super(props);
        this.state = {
            name: "",
@@ -16,7 +22,7 @@ export default class AddFolder extends Component {
                name: ''
            }
        };
-   }
+   };
 
    static contextType = notefulContext;
    
@@ -61,7 +67,7 @@ export default class AddFolder extends Component {
         e.preventDefault();
         
         const folder = {
-            folder_name: e.target['folder-name'].value
+            folder_name: e.target['folder-name-input'].value
         };
 
         fetch(`${config.API_ENDPOINT}/folders`, {
@@ -87,8 +93,6 @@ export default class AddFolder extends Component {
 
     render () {
         return (
-            <notefulContext.Consumer>
-                {(context) => (
                     <section className='AddFolder'>
                         <h2>
                             Create a New Folder:
@@ -102,7 +106,7 @@ export default class AddFolder extends Component {
                                     Name
                                 </label>
 
-                                <input type="text" id="folder-name" onChange={e => this.updateFolderName(e.target.value)}/>
+                                <input type="text" id="folder-name-input" onChange={e => this.updateFolderName(e.target.value)}/>
                                 <ValidationError hasError={!this.state.validName} message={this.state.validationMessages.name}/>
 
                             </div>
@@ -117,8 +121,6 @@ export default class AddFolder extends Component {
 
                         </NotefulForm>
                     </section>
-                )}
-            </notefulContext.Consumer>
         );
     }
 }
