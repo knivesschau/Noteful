@@ -20,10 +20,10 @@ export default class NoteListNav extends Component {
                         <li key={folder.folder_id}>
                             <NavLink
                                 className="NoteListNav__folder-link"
-                                to={`/folders/${folder.folder_id}`}>
+                                to={`/folders/${folder.id}`}>
                             
                                 <span className="NoteListNav__num-notes">
-                                    {countNotesForFolder(notes, folder.folder_id)}
+                                    {countNotesForFolder(notes, folder.id)}
                                 </span>
                                 {folder.folder_name}
                             </NavLink>

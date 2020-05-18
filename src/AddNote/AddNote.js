@@ -95,9 +95,9 @@ export default class AddNote extends Component {
         .then(note => {
             console.log(note);
             this.context.addNote(note);
-            this.props.history.push(`/notes/${note.note_id}`);
+            this.props.history.push(`/notes/${note.id}`);
         })
-        .catch(error => {
+        .catch(error => { 
             console.error({error});
         });
     }
@@ -143,7 +143,7 @@ export default class AddNote extends Component {
                         <select id="note-folder-seiect" name="note-folder-id">
                             
                             {folders.map(folder => 
-                                <option key={folder.folder_id} value={folder.folder_id} onChange={e => this.updateFolderSelect(e.target.value)}>
+                                <option key={folder.id} value={folder.id} onChange={e => this.updateFolderSelect(e.target.value)}>
                                 {folder.folder_name}
                                 </option>
                                 )}
